@@ -71,8 +71,13 @@ class ReservationController extends BackendController
     {
 
         $reservationService    = new ReservationService();
-        $table = $reservationService->CheckReservation(true, $request->reservation_date, $request->guest, $request->restaurant_id);
+        $table = $reservationService->CheckReservation(true, $request->reservation_date, $request->guest, $request->restaurant_id, (int) $request->time_slot);
         $tableArray = collect($table)->sortBy('capacity')->toArray();
+        if (blank($tableArray)) {
+            return redirect()->back()
+                ->withErrors(['time_slot' => 'The selected time slot is no longer available for this guest count.'])
+                ->withInput();
+        }
 
         $reservation                   = new Reservation;
         $reservation->first_name       = $request->first_name;
@@ -125,8 +130,13 @@ class ReservationController extends BackendController
     {
         $reservation              = Reservation::findOrFail($id);
         $reservationService    = new ReservationService();
-        $table = $reservationService->CheckReservation(true, $request->reservation_date, $request->guest, $request->restaurant_id);
+        $table = $reservationService->CheckReservation(true, $request->reservation_date, $request->guest, $request->restaurant_id, (int) $request->time_slot);
         $tableArray = collect($table)->sortBy('capacity')->toArray();
+        if (blank($tableArray)) {
+            return redirect()->back()
+                ->withErrors(['time_slot' => 'The selected time slot is no longer available for this guest count.'])
+                ->withInput();
+        }
 
         $reservation->first_name = $request->first_name;
         $reservation->last_name = $request->last_name;
@@ -250,6 +260,10 @@ class ReservationController extends BackendController
         $reservationService    = new ReservationService();
         $timeSlots = $reservationService->CheckReservation(false, $request->date, $request->capacity, $request->restaurant);
         if (blank($timeSlots)) {
+            $hasSlots = TimeSlot::where(['restaurant_id' => $request->restaurant, 'status' => Status::ACTIVE])->exists();
+            if (!$hasSlots) {
+                return "No time slots configured <br/> for this restaurant.";
+            }
             return "Time slot is not available <br/> for the selected guest count.";
         }
         return view('admin.reservation.timeSlot', compact('timeSlots'));
