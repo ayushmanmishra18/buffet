@@ -513,7 +513,13 @@ class OrderService
         if (!blank($data['items'])) {
             $i              = 0;
             $orderLineItems = [];
+            $buffetIds = \App\Models\MenuItem::with('categories')
+                ->whereIn('id', collect($data['items'])->pluck('menu_item_id')->filter()->all())
+                ->get()->filter->isBuffet()->pluck('id')->all();
             foreach ($data['items'] as $item) {
+                if (in_array($item['menu_item_id'] ?? null, $buffetIds)) {
+                    abort(403, __('frontend.buffet_takeaway_error'));
+                }
                 $optionTotal = 0;
                 if (isset($item['options']) && !blank($item['options'])) {
                     foreach ($item['options'] as $option) {

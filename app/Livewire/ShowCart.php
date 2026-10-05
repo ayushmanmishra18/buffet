@@ -23,6 +23,10 @@ class ShowCart extends Component
 
     public function submit($restaurant_id, $menu_id)
     {
+        $item = MenuItem::with('categories')->find($menu_id);
+        if ($item && $item->isBuffet()) {
+            abort(403, __('frontend.buffet_takeaway_error'));
+        }
 
         session()->put('session_cart_restaurant_id', $restaurant_id);
         session()->put('session_cart_restaurant', $this->restaurant->slug);

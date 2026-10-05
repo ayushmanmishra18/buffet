@@ -1,8 +1,55 @@
 <div class="">
+    <style>
+        .buffet-section .product-card { border: 2px solid #EE1D48; box-shadow: 0 4px 24px rgba(238, 29, 72, .12); }
+        .buffet-badge { display: inline-block; background: #EE1D48; color: #fff; font-size: 11px; font-weight: 700;
+            letter-spacing: .06em; text-transform: uppercase; border-radius: 12px; padding: 3px 12px; margin-left: 10px;
+            vertical-align: middle; box-shadow: 0 8px 16px rgba(23, 31, 70, .08); }
+    </style>
 
     @php
         $currenttime = \Carbon\Carbon::now()->format('H:i:s');
     @endphp
+    @if (!blank($buffet_products))
+        <div wire:ignore="" id="listing_product_buffet">
+            <div class="product-category buffet-section" id="popular-items-buffet">
+                <h3 class="product-category-title">{{ __('frontend.buffet') }}<span class="buffet-badge">{{ __('frontend.dine_in_only') }}</span></h3>
+                <div class="product-card-groupp">
+                    <div class="row gx-3 gy-3">
+                        @foreach ($buffet_products as $menu_item)
+                            <div class="col-md-6" wire:key="buffet-{{ $menu_item['id'] }}">
+                                <div class="product-card">
+                                    <figure class="product-card-media d-flex justify-content-center align-items-center">
+                                        <img data-src="{{ $menu_item['image'] }}" class="lazy" alt="product">
+                                        <div class="loader-container">
+                                            <img src="{{ asset('frontend/images/default/notfound.png') }}" class="loader" alt="loading">
+                                        </div>
+                                    </figure>
+                                    <div class="product-card-content">
+                                        <h4 class="product-card-title">
+                                            {{ \Illuminate\Support\Str::limit($menu_item['name'], 22) }}
+                                        </h4>
+                                        <p class="product-card-text">
+                                            {!! \Illuminate\Support\Str::limit(strip_tags($menu_item['description']), 70) !!}
+                                        </p>
+                                        <div class="product-card-info">
+                                            <div class="product-card-price">
+                                                <span>
+                                                    {{ setting('currency_code') }}{{ $menu_item['unit_price'] - $menu_item['discount_price'] }}
+                                                </span>
+                                            </div>
+                                            <button type="button" class="product-card-add" data-bs-toggle="modal" data-bs-target="#booking-modal">
+                                                <span>{{ __('frontend.table_booking') }}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
     @if (!blank($categories_products))
         @foreach ($categories_products as $categories_product_key => $categories_product)
             <div wire:ignore="" wire:key="{{ $categories_product_key }}" id="listing_product{{ $categories_product_key }}">

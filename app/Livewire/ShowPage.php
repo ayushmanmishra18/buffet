@@ -10,6 +10,7 @@ class ShowPage extends Component
     public $categories_products = [];
     public $categories = [];
     public $other_products;
+    public $buffet_products = [];
     public $restaurant;
     public $menu_item;
     public $menu_id = 0;
@@ -28,6 +29,11 @@ class ShowPage extends Component
     {
         $products = MenuItem::with('categories')->with('media')->with('variations')->with('options')->where(['restaurant_id' => $this->restaurant->id])->get();
         foreach($products as $key=>$product) {
+            if ($product->isBuffet()) {
+                $this->buffet_products[$key] = $product;
+                $this->buffet_products[$key]['image'] = $product->image;
+                continue;
+            }
             $product_categories = $product->categories;
             if(!blank($product_categories)) {
                 foreach($product_categories as $product_category) {

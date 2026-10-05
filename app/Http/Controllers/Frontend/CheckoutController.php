@@ -68,6 +68,17 @@ class CheckoutController extends FrontendController
         $this->setDeliveryCharge($request);
         $restaurant = Restaurant::find($sessionRestaurantId);
 
+        $cartItems = data_get(session()->get('cart'), 'items', []);
+        if (!blank($cartItems)) {
+            $buffetIds = \App\Models\MenuItem::with('categories')
+                ->whereIn('id', collect($cartItems)->pluck('menuItem_id')->filter()->all())
+                ->get()->filter->isBuffet()->pluck('id')->all();
+            if (!blank($buffetIds)) {
+                return redirect(route('checkout.index'))
+                    ->withErrors(['cart' => __('frontend.buffet_takeaway_error')]);
+            }
+        }
+
         $validation = [
             'mobile'       => 'required|regex:/^([0-9\s\-\+\(\)]*)$/',
             'payment_type' => 'required|numeric',

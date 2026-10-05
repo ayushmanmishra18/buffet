@@ -51,6 +51,21 @@ class MenuItem extends BaseModel implements HasMedia
         return $this->belongsToMany(Category::class, 'category_menu_items');
     }
 
+    /**
+     * Dine-in buffet item (book-a-table only, never delivered).
+     * True when the item sits in a "buffet" category or its name
+     * contains "buffet" (e.g. "Royal Lunch Buffet").
+     */
+    public function isBuffet()
+    {
+        foreach ($this->categories as $category) {
+            if (strtolower(trim($category->slug ?? '')) === 'buffet') {
+                return true;
+            }
+        }
+        return stripos($this->name ?? '', 'buffet') !== false;
+    }
+
     public function restaurants()
     {
         return $this->belongsToMany(Restaurant::class, 'menu_items');
