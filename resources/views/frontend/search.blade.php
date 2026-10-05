@@ -13,6 +13,10 @@
     <!--======= RESTAURANT PART START ========-->
     <section class="restaurant section-gap-66">
         <div class="container">
+            <a href="{{ url()->previous(route('home')) }}" class="booking-paginate mb-3">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>{{ __('frontend.back') }}</span>
+            </a>
             <div class="filter-group" id="filter">
                 <div class="swiper filter-swiper">
                     <nav class="swiper-wrapper d-flex flex-wrap">
