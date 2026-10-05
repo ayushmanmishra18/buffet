@@ -139,6 +139,11 @@
                                 <button type="button" class="rest-swiper-prev fa-solid fa-chevron-left"></button>
                                 <div class="swiper rest-swiper">
                                     <nav class="swiper-wrapper">
+                                        @if (!empty($hasBuffet))
+                                            <a href="#listing_product_buffet" class="swiper-slide">
+                                                {{ __('frontend.buffet') }}
+                                            </a>
+                                        @endif
                                         @foreach ($categories as $category)
                                             <a href="#listing_product{{ $category->id }}" wire:key="{{ $category->id }}"
                                                 class="swiper-slide">
@@ -154,6 +159,33 @@
                                 </div>
                                 <button type="button" class="rest-swiper-next fa-solid fa-chevron-right"></button>
                             </div>
+                        </div>
+                        <style>
+                            .rest-switch-row { display: flex; gap: 10px; margin: 14px 0 4px; flex-wrap: wrap; align-items: stretch; }
+                            .rest-switch-row select.rest-switch-select { flex: 1; min-width: 200px; border: 1px solid #EFF0F6;
+                                border-radius: 12px; padding: 10px 14px; font-size: 14px; font-weight: 500; color: #1F1F39;
+                                background-color: #fff; box-shadow: 0 8px 16px rgba(23, 31, 70, .06); cursor: pointer; }
+                            .rest-switch-row select.rest-switch-select:focus { outline: none; border-color: #EE1D48; }
+                            .rest-switch-row .rest-switch-location { display: inline-flex; align-items: center; gap: 6px;
+                                border: 1px solid #EE1D48; color: #EE1D48; border-radius: 12px; padding: 10px 18px;
+                                font-size: 14px; font-weight: 600; white-space: nowrap; background: #fff;
+                                box-shadow: 0 8px 16px rgba(23, 31, 70, .06); transition: all linear .3s; text-decoration: none; }
+                            .rest-switch-row .rest-switch-location:hover { background: #EE1D48; color: #fff; }
+                        </style>
+                        <div class="rest-switch-row">
+                            @if (!blank($otherRestaurants))
+                                <select class="rest-switch-select" aria-label="{{ __('frontend.change_hotel') }}"
+                                    onchange="if(this.value) window.location.href=this.value;">
+                                    <option value="">{{ $restaurant->name }} ({{ __('frontend.change_hotel') }})</option>
+                                    @foreach ($otherRestaurants as $otherRestaurant)
+                                        <option value="{{ route('restaurant.show', [$otherRestaurant->slug]) }}">
+                                            {{ $otherRestaurant->name }}</option>
+                                    @endforeach
+                                </select>
+                            @endif
+                            <a href="{{ route('search') }}" class="rest-switch-location">
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ __('frontend.change_location') }}</a>
                         </div>
 
                         @livewire('show-page', ['restaurant' => $restaurant])
@@ -244,6 +276,14 @@
                             <h4>{{ __('frontend.time_slots') }}</h4>
 
                             <ul class="panel-dropdown-scrollable  reserveList" id="showTimeSlot">
+
+                            </ul>
+
+                        </div>
+                        <div class="booking-modal-time">
+                            <h4>{{ __('frontend.tables') }}</h4>
+
+                            <ul class="panel-dropdown-scrollable  reserveList" id="showTables">
 
                             </ul>
 
@@ -414,6 +454,7 @@
 
 @push('js')
     <script> const reservationUrl = "{{ route('reservation.check') }}";</script>
+    <script> const reservationTablesUrl = "{{ route('reservation.tables') }}";</script>
     <script src="{{ asset('frontend/js/booking.js') }}" type="text/javascript"></script>
     <script src="{{ asset('frontend/js/show.js') }}" type="text/javascript"></script>
     <script src="{{ asset('frontend/js/loader.js') }}" type="text/javascript"></script>

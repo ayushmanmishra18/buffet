@@ -93,6 +93,12 @@ $(document).ready(function () {
             jsbookDiv.innerText = "Please select a time slot.";
             return false;
         } else {
+            var tablePills = document.querySelectorAll('#showTables .table-pill.enable');
+            var tablePicked = document.getElementById('TableId');
+            if (tablePills.length > 0 && (!tablePicked || !tablePicked.value)) {
+                jsbookDiv.innerText = "Please select a table.";
+                return false;
+            }
             $(this).closest("form").submit();
         }
     });

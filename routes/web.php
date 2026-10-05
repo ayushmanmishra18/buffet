@@ -115,6 +115,7 @@ Route::group(['middleware' => ['installed', 'license-activate']], function () {
     Route::get('reservation/booking',                       [ReservationController::class, 'booking'])->name('restaurant.reservation')->middleware('auth');
     Route::get('restaurant/reservation/booking',            [ReservationController::class, 'store'])->name('restaurant.reservation.store')->middleware('auth');
     Route::post('reservation/check',                        [ReservationController::class, 'check'])->name('reservation.check');
+    Route::post('reservation/tables',                       [ReservationController::class, 'tables'])->name('reservation.tables');
     Route::get('reservation/confirmation',                  [ReservationController::class, 'confirmation'])->name('reservation.confirmation')->middleware('auth');
 
     Route::get('checkout',                                  [CheckoutController::class, 'index'])->name('checkout.index')->middleware('auth');

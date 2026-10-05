@@ -35,10 +35,21 @@ $(".rest-swiper nav a").on("click", function (event) {
 });
 
 function selected(id) {
-        const enable = document.querySelectorAll('.enable');
+        const enable = document.querySelectorAll('#showTimeSlot .enable');
         enable.forEach(box => {
             box.classList.remove('selected');
         });
         const slot = document.getElementById("slot_" + id);
         slot.classList.add('selected');
+}
+
+function selectTable(id) {
+        const pills = document.querySelectorAll('#showTables .table-pill.enable');
+        pills.forEach(box => {
+            box.classList.remove('selected');
+        });
+        const pill = document.getElementById("table_" + id);
+        if (pill) {
+            pill.classList.add('selected');
+        }
 }

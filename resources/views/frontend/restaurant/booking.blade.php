@@ -18,7 +18,10 @@
                 <input type="hidden" name="restaurant_id" value="{{ $restaurant->id }}">
                 <input type="hidden" name="reservation_date" value="{{ $reservationDate }}">
                 <input type="hidden" name="guest" value="{{ $guest }}">
-                <input type="hidden" name="time_slot" value="{{ $timeSlot->id }}">
+                    <input type="hidden" name="time_slot" value="{{ $timeSlot->id }}">
+                    @if (!empty($table))
+                        <input type="hidden" name="table_id" value="{{ $table->id }}">
+                    @endif
                 <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                 <fieldset class="booking-fieldset">
 
@@ -128,6 +131,50 @@
                     </div>
                     @endif
 
+                    @if (!empty($advanceAmount) && $advanceAmount > 0)
+                        <div class="booking-advance mt-3 p-3 border rounded">
+                            <h5>{{ __('frontend.advance_payment') }}:
+                                {{ setting('currency_code') }}{{ number_format($advanceAmount, 2) }}</h5>
+                            <p class="mb-2">{{ __('frontend.advance_payment_note') }}</p>
+                            @if (!empty($paymentSetting->upi_id))
+                                <p class="mb-2">{{ __('frontend.pay_to_upi') }}:
+                                    <strong>{{ $paymentSetting->upi_id }}</strong></p>
+                            @endif
+                            <div class="form-group">
+                                <label class="form-label required">{{ __('frontend.payment_method') }}</label>
+                                <div>
+                                    <label class="me-3"><input type="radio" name="advance_payment_method"
+                                            value="upi" {{ old('advance_payment_method') == 'upi' ? 'checked' : '' }}>
+                                        UPI</label>
+                                    @if (!empty($paymentSetting->accept_phonepe_qr))
+                                        <label class="me-3"><input type="radio" name="advance_payment_method"
+                                                value="phonepe_qr" {{ old('advance_payment_method') == 'phonepe_qr' ? 'checked' : '' }}>
+                                            PhonePe QR</label>
+                                    @endif
+                                    @if (!empty($paymentSetting->accept_paytm_qr))
+                                        <label class="me-3"><input type="radio" name="advance_payment_method"
+                                                value="paytm_qr" {{ old('advance_payment_method') == 'paytm_qr' ? 'checked' : '' }}>
+                                            Paytm QR</label>
+                                    @endif
+                                </div>
+                                @error('advance_payment_method')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label required">{{ __('frontend.upi_transaction_id') }}</label>
+                                <input type="text"
+                                    class="form-control @error('advance_upi_transaction_id') is-invalid @enderror"
+                                    placeholder="{{ __('frontend.upi_transaction_id') }}"
+                                    name="advance_upi_transaction_id"
+                                    value="{{ old('advance_upi_transaction_id') }}">
+                                @error('advance_upi_transaction_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    @endif
+
                     <button class="form-btn mt-3" type="submit">{{ __('frontend.confirm_booking') }} </button>
                 </fieldset>
             </form>
@@ -181,6 +228,10 @@
                                 {{ __('frontend.adults') }}</span></li>
                         <li>{{ __('frontend.time_slot') }}<span> {{ date('h:i A', strtotime($timeSlot->start_time)) }}
                                 - {{ date('h:i A', strtotime($timeSlot->end_time)) }} </span></li>
+                        @if (!empty($table))
+                            <li>{{ __('levels.table') }}<span> {{ $table->name }}
+                                    ({{ $table->capacity }} {{ __('frontend.guests') }})</span></li>
+                        @endif
                     </ul>
                 </div>
             </div>

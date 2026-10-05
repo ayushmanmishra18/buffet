@@ -29,6 +29,7 @@ class ReservationBookRequest extends FormRequest
             'reservation_date'  =>'required|date|after_or_equal:today',
             'qtyInput'          => ['required', 'numeric'],
             'time_slot'         => ['required', 'numeric'],
+            'table_id'          => ['nullable', 'numeric'],
         ];
     }
 

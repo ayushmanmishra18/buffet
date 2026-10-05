@@ -11,6 +11,7 @@ use App\Http\Services\ReservationService;
 use App\Models\Reservation;
 use App\Models\Restaurant;
 use App\Models\RestaurantPaymentSetting;
+use App\Models\Table;
 use App\Models\TimeSlot;
 use Illuminate\Http\Request;
 
@@ -30,6 +31,28 @@ class ReservationController extends FrontendController
         $restaurant = Restaurant::findOrFail($request->get('restaurant_id'));
         $timeSlot   = TimeSlot::findOrFail($request->get('time_slot'));
         $guest      = (int) $request->get('qtyInput');
+
+        $reservationService = new ReservationService();
+        $reservationDate = date('Y-m-d', strtotime($request->get('reservation_date')));
+        $available = $reservationService->SlotAvailability($reservationDate, $guest, $restaurant->id);
+        if (!isset($available[$timeSlot->id]) || empty($available[$timeSlot->id]['available'])) {
+            return redirect()->back()
+                ->withErrors(['time_slot' => 'The selected time slot is no longer available. Please choose another.'])
+                ->withInput();
+        }
+
+        $table = null;
+        if ($request->filled('table_id')) {
+            $freeTables = $reservationService->CheckReservation(true, $reservationDate, $guest, $restaurant->id, $timeSlot->id);
+            if (!isset($freeTables[(int) $request->get('table_id')])) {
+                return redirect()->back()
+                    ->withErrors(['table_id' => 'The selected table is no longer available. Please choose another.'])
+                    ->withInput();
+            }
+            $table = Table::find($request->get('table_id'));
+        }
+
+        $this->data['table'] = $table;
 
         // Load payment settings to show advance info
         $paymentSetting = RestaurantPaymentSetting::forRestaurant($restaurant->id);
@@ -71,9 +94,15 @@ class ReservationController extends FrontendController
             true,
             date('Y-m-d', strtotime($request->get('reservation_date'))),
             $guest,
-            $request->get('restaurant_id')
+            $request->get('restaurant_id'),
+            (int) $request->get('time_slot')
         );
         $tableArray = collect($table)->sortBy('capacity')->toArray();
+        if (blank($tableArray)) {
+            return redirect()->back()
+                ->withErrors(['time_slot' => 'The selected time slot just got fully booked. Please choose another.'])
+                ->withInput();
+        }
 
         $reservation                   = new Reservation;
         $reservation->first_name       = $request->get('first_name');
@@ -82,7 +111,10 @@ class ReservationController extends FrontendController
         $reservation->phone            = $request->get('countrycode') . $request->get('phone');
         $reservation->reservation_date = date('Y-m-d', strtotime($request->get('reservation_date')));
         $reservation->restaurant_id    = $request->get('restaurant_id');
-        $reservation->table_id         = $table[array_key_first($tableArray)]['tableID'];
+        $pickedTableId = (int) $request->get('table_id');
+        $reservation->table_id = ($pickedTableId && isset($tableArray[$pickedTableId]))
+            ? $tableArray[$pickedTableId]['tableID']
+            : $table[array_key_first($tableArray)]['tableID'];
         $reservation->time_slot_id     = $request->get('time_slot');
         $reservation->guest_number     = $guest;
         $reservation->user_id          = auth()->user()->id;
@@ -122,8 +154,7 @@ class ReservationController extends FrontendController
     public function check(Request $request)
     {
         $reservationService = new ReservationService();
-        $timeSlots = $reservationService->CheckReservation(
-            false,
+        $timeSlots = $reservationService->SlotAvailability(
             date('Y-m-d', strtotime($request->date)),
             $request->capacity,
             $request->restaurant
@@ -132,13 +163,28 @@ class ReservationController extends FrontendController
     }
 
     /**
+     * AJAX — return tables of one slot with free/booked states.
+     */
+    public function tables(Request $request)
+    {
+        $reservationService = new ReservationService();
+        $items = $reservationService->SlotTables(
+            date('Y-m-d', strtotime($request->date)),
+            (int) $request->slot,
+            $request->capacity,
+            $request->restaurant
+        );
+        return view('frontend.restaurant.tables', compact('items'));
+    }
+
+    /**
      * Booking confirmation page.
      */
     public function confirmation()
     {
-        $reservation = Reservation::where(['user_id' => auth()->user()->id])
+        $reservation = Reservation::with(['table', 'timeSlot', 'restaurant'])
+            ->where(['user_id' => auth()->user()->id])
             ->orderBy('created_at', 'desc')
-            ->select('email', 'advance_amount', 'advance_payment_status')
             ->first();
 
         $this->data['reservation'] = $reservation;
