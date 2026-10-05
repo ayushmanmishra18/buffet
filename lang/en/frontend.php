@@ -171,7 +171,7 @@ return array (
   'id'                              => 'ID',
   'type'                            => 'Type',
   'amount'                          => 'Amount',
-  'transaction_yet'                 => 'You doesn\'t have any transaction yet.',
+  'transaction_yet'                 => 'You don\'t have any transactions yet.',
   'name_on_card'                    => 'Name on card',
   'card_details'                    => 'Card Details',
   'all_category'                    => 'All category',
