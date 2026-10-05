@@ -55,10 +55,18 @@ class RestaurantController extends FrontendController
         $categories_products = [];
 
         $products            = MenuItem::with('categories')->with('media')->with('variations')->with('options')->where(['restaurant_id' => $this->restaurant->id])->where('status', MenuItemStatus::ACTIVE)->get();
+        $this->data['hasBuffet'] = false;
         foreach ($products as $product) {
+            if ($product->isBuffet()) {
+                $this->data['hasBuffet'] = true;
+                continue;
+            }
             $product_categories = $product->categories;
             if (!blank($product_categories)) {
                 foreach ($product_categories as $product_category) {
+                    if (strtolower(trim($product_category->slug ?? '')) === 'buffet') {
+                        continue;
+                    }
                     $categories[$product_category->id]            = $product_category;
                     $categories_products[$product_category->id][] = $product;
                 }
@@ -112,6 +120,9 @@ class RestaurantController extends FrontendController
 
     private function loadViewData()
     {
+        $this->data['otherRestaurants'] = Restaurant::where('status', \App\Enums\Status::ACTIVE)
+            ->where('id', '!=', $this->restaurant->id)
+            ->orderBy('name')->get(['id', 'name', 'slug']);
         $this->data['restaurant']  = $this->restaurant;
         $this->data['qrCode']      = $this->qrCode();
         $this->data['currenttime'] = now()->format('H:i:s');
