@@ -200,6 +200,9 @@ class OrderCart extends Component
         $restaurantId = session('session_cart_restaurant_id');
         $totalAmount = (float) data_get($this->carts, 'totalAmount', 0);
         $coupon = Coupon::where('slug', $this->coupon)->first();
+        if (!$coupon) {
+            $coupon = Coupon::where('name', $this->coupon)->first();
+        }
 
         if (!$coupon) {
             $this->msg = 'This Coupon is Invalid';
@@ -245,9 +248,6 @@ class OrderCart extends Component
             $discount = (float) $coupon->amount;
         } else {
             $percent = (float) $coupon->amount;
-            if ($percent > 0 && $percent <= 1) {
-                $percent = $percent * 100;
-            }
 
             if (function_exists('bcdiv')) {
                 $discount = bcdiv(bcmul((string)$base, (string)$percent, 4), '100', 2);

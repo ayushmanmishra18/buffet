@@ -52,7 +52,7 @@ class CouponController extends BackendController
     public function create()
     {
         if (!blank(auth()->user()->restaurant)) {
-            $today = date('Y-m-d h:i:s');
+            $today = date('Y-m-d H:i:s');
             $coupons = Coupon::where('restaurant_id', auth()->user()->restaurant->id)
                 ->whereDate('to_date', '>=', $today)
                 ->whereDate('from_date', '<=', $today)

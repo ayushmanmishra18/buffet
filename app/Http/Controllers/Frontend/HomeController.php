@@ -39,8 +39,8 @@ class HomeController extends FrontendController
 
     private function getValidVouchers()
     {
-        $coupons = Coupon::where('to_date', '>=', now()->format('Y-m-d h:i:s'))
-            ->where('from_date', '<=', now()->format('Y-m-d h:i:s'))
+        $coupons = Coupon::where('to_date', '>=', now()->format('Y-m-d H:i:s'))
+            ->where('from_date', '<=', now()->format('Y-m-d H:i:s'))
             ->where('restaurant_id', '!=', 0)
             ->where('limit', '>', 0)
             ->get();

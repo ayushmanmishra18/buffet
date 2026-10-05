@@ -403,7 +403,7 @@
 
                             <li>
                                 <span>{{ __('frontend.total') }}</span>
-                                <span>{{ setting('currency_code') }}<span id="total">0</span></span>
+                                <span>{{ setting('currency_code') }}<span id="total">{{ number_format($menuitems['subTotalAmount'] - $menuitems['coupon_amount'], 2) }}</span></span>
                             </li>
                         </ul>
                     </div>

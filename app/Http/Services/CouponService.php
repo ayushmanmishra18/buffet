@@ -13,14 +13,14 @@ class CouponService
 
     public function coupons()
     {
-        $today = date('Y-m-d h:i:s');
+        $today = date('Y-m-d H:i:s');
         $this->data['coupons'] = Coupon::where('coupon_type', CouponType::COUPON)->whereDate('to_date', '>', $today)->whereDate('from_date', '<', $today)->where('limit', '>', 0)->descending()->get();
         return $this->data['coupons'];
     }
 
     public function vouchers($id)
     {
-        $today = date('Y-m-d h:i:s');
+        $today = date('Y-m-d H:i:s');
         $this->data['voucher'] = Coupon::where('coupon_type', CouponType::VOUCHER)->whereDate('to_date', '>', $today)->whereDate('from_date', '<', $today)->where('limit', '>', 0)->where('restaurant_id', $id)->descending()->get();
         return $this->data['voucher'];
     }
@@ -70,7 +70,7 @@ class CouponService
     {
         $response = ['status' => false];
 
-        $today = date('Y-m-d h:i:s');
+        $today = date('Y-m-d H:i:s');
         $restaurant_id = $id;
 
         $coupons = Coupon::where('restaurant_id', $restaurant_id)
@@ -93,7 +93,7 @@ class CouponService
 
     public function allCoupons()
     {
-        $today = date('Y-m-d h:i:s');
+        $today = date('Y-m-d H:i:s');
 
         $coupons = Coupon::where('coupon_type', CouponType::COUPON)
             ->whereDate('to_date', '>=', $today)

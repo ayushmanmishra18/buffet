@@ -79,7 +79,7 @@ class CouponRequest extends FormRequest
     public function activeCoupon()
     {
 
-        $today = date('Y/m/d h:i');
+        $today = date('Y/m/d H:i');
 
 
         $coupons = Coupon::where('restaurant_id', request('restaurant_id'))
