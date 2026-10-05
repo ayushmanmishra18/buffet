@@ -17,6 +17,7 @@ return array (
   'buffet'                          => 'Buffet',
   'dine_in_only'                    => 'Dine-in only',
   'buffet_takeaway_error'           => 'Buffet is dine-in only. Please book a table instead.',
+  'item_price_pending'              => 'One or more items have no price set yet. Please remove them and try again.',
   'advance_payment'                 => 'Advance Payment Due',
   'advance_payment_note'            => 'Pay this advance now to confirm your table. The owner will verify your payment.',
   'pay_to_upi'                      => 'Pay to UPI ID',

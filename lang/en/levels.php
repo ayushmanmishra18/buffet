@@ -202,6 +202,7 @@ return array(
   'created_at'                        => 'Created At',
   'unit_price'                        => 'Unit Price',
   'discount_price'                    => 'Discount Price',
+  'price_set_by_owner'                => 'Price is set by the restaurant owner.',
   'label'                             => 'Label',
   'rate'                              => 'Rate',
   'add_tax'                           => 'Add Tax',

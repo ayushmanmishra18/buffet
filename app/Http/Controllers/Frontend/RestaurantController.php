@@ -54,7 +54,7 @@ class RestaurantController extends FrontendController
         $other_products      = [];
         $categories_products = [];
 
-        $products            = MenuItem::with('categories')->with('media')->with('variations')->with('options')->where(['restaurant_id' => $this->restaurant->id])->where('status', MenuItemStatus::ACTIVE)->get();
+        $products            = MenuItem::with('categories')->with('media')->with('variations')->with('options')->where(['restaurant_id' => $this->restaurant->id])->where('status', MenuItemStatus::ACTIVE)->whereNotNull('unit_price')->get();
         $this->data['hasBuffet'] = false;
         foreach ($products as $product) {
             if ($product->isBuffet()) {

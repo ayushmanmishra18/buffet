@@ -31,7 +31,7 @@ class MenuItemRequest extends FormRequest
             'restaurant_id'  => ['required', 'numeric'],
             'name'           => ['required', 'string', 'max:255'],
             'categories.*'   => 'nullable',
-            'unit_price'     => ['required', 'numeric', new IniAmount()],
+            'unit_price'     => [(auth()->user()->myrole ?? 0) == \App\Enums\UserRole::ADMIN ? 'nullable' : 'required', 'numeric', new IniAmount()],
             'discount_price' => ['nullable', 'numeric', new IniAmount()],
             'status'         => 'required|numeric',
             'description'    => 'nullable|string|max:1000',
@@ -78,7 +78,8 @@ class MenuItemRequest extends FormRequest
 
     private function priceValidationCheck()
     {
-        if (request('unit_price') < request('discount_price')) {
+        if (request()->filled('unit_price') && request()->filled('discount_price')
+            && request('unit_price') < request('discount_price')) {
             return true;
         }
         return false;

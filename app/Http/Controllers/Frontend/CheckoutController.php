@@ -70,12 +70,16 @@ class CheckoutController extends FrontendController
 
         $cartItems = data_get(session()->get('cart'), 'items', []);
         if (!blank($cartItems)) {
-            $buffetIds = \App\Models\MenuItem::with('categories')
+            $cartMenuItems = \App\Models\MenuItem::with('categories')
                 ->whereIn('id', collect($cartItems)->pluck('menuItem_id')->filter()->all())
-                ->get()->filter->isBuffet()->pluck('id')->all();
-            if (!blank($buffetIds)) {
+                ->get();
+            if ($cartMenuItems->filter->isBuffet()->isNotEmpty()) {
                 return redirect(route('checkout.index'))
                     ->withErrors(['cart' => __('frontend.buffet_takeaway_error')]);
+            }
+            if ($cartMenuItems->whereNull('unit_price')->isNotEmpty()) {
+                return redirect(route('checkout.index'))
+                    ->withErrors(['cart' => __('frontend.item_price_pending')]);
             }
         }
 

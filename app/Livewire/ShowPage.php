@@ -27,7 +27,7 @@ class ShowPage extends Component
 
     public function mount()
     {
-        $products = MenuItem::with('categories')->with('media')->with('variations')->with('options')->where(['restaurant_id' => $this->restaurant->id])->get();
+        $products = MenuItem::with('categories')->with('media')->with('variations')->with('options')->where(['restaurant_id' => $this->restaurant->id])->whereNotNull('unit_price')->get();
         foreach($products as $key=>$product) {
             if ($product->isBuffet()) {
                 $this->buffet_products[$key] = $product;

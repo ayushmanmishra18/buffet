@@ -27,6 +27,9 @@ class ShowCart extends Component
         if ($item && $item->isBuffet()) {
             abort(403, __('frontend.buffet_takeaway_error'));
         }
+        if ($item && is_null($item->unit_price)) {
+            abort(403, __('frontend.item_price_pending'));
+        }
 
         session()->put('session_cart_restaurant_id', $restaurant_id);
         session()->put('session_cart_restaurant', $this->restaurant->slug);

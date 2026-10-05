@@ -76,8 +76,12 @@ class MenuItemController extends BackendController
         $menuItem->restaurant_id  = $request->get('restaurant_id');
         $menuItem->name           = $request->get('name');
         $menuItem->description    = $request->get('description');
-        $menuItem->unit_price     = $request->get('unit_price');
-        $menuItem->discount_price = $request->get('discount_price') ?? 0;
+        if (auth()->user()->myrole != \App\Enums\UserRole::ADMIN) {
+            $menuItem->unit_price     = $request->get('unit_price');
+            $menuItem->discount_price = $request->get('discount_price') ?? 0;
+        } else {
+            $menuItem->discount_price = 0;
+        }
         $menuItem->status         = $request->get('status');
         $menuItem->menu_number         = $menuNumber;
         $menuItem->save();
@@ -131,8 +135,10 @@ class MenuItemController extends BackendController
         $menuItem->restaurant_id  = $request->get('restaurant_id');
         $menuItem->name           = $request->get('name');
         $menuItem->description    = $request->get('description');
-        $menuItem->unit_price     = $request->get('unit_price');
-        $menuItem->discount_price = $request->get('discount_price') ?? 0;
+        if (auth()->user()->myrole != \App\Enums\UserRole::ADMIN) {
+            $menuItem->unit_price     = $request->get('unit_price');
+            $menuItem->discount_price = $request->get('discount_price') ?? 0;
+        }
         $menuItem->status         = $request->get('status');
         $menuItem->save();
 

@@ -68,20 +68,28 @@
 
                             <div class="col-12 sm:col-6 md:col-4 xl:col-3">
 								<label class="db-field-title required" for="unit_price">{{ __('levels.unit_price') }}</label>
-								<input type="text" name="unit_price" id="unit_price" class="db-field-control @error('unit_price') invalid @enderror" value="{{ old('unit_price') }}">
-	
+								<input type="text" name="unit_price" id="unit_price" class="db-field-control @error('unit_price') invalid @enderror" value="{{ old('unit_price') }}"
+                                    @if (auth()->user()->myrole == App\Enums\UserRole::ADMIN) disabled title="{{ __('levels.price_set_by_owner') }}" @endif>
+
 								@error('unit_price')
 								<small class="db-field-alert">{{ $message }}</small>
 								@enderror
+                                @if (auth()->user()->myrole == App\Enums\UserRole::ADMIN)
+                                    <small style="color:#888;font-size:11px;">{{ __('levels.price_set_by_owner') }}</small>
+                                @endif
 							</div>
 
                             <div class="col-12 sm:col-6 md:col-4 xl:col-3">
 								<label class="db-field-title" for="discount_price">{{ __('levels.discount_price') }}</label>
-								<input type="text" name="discount_price" id="discount_price" class="db-field-control @error('discount_price') invalid @enderror" value="{{ old('discount_price') }}">
-	
+								<input type="text" name="discount_price" id="discount_price" class="db-field-control @error('discount_price') invalid @enderror" value="{{ old('discount_price') }}"
+                                    @if (auth()->user()->myrole == App\Enums\UserRole::ADMIN) disabled title="{{ __('levels.price_set_by_owner') }}" @endif>
+
 								@error('discount_price')
 								<small class="db-field-alert">{{ $message }}</small>
 								@enderror
+                                @if (auth()->user()->myrole == App\Enums\UserRole::ADMIN)
+                                    <small style="color:#888;font-size:11px;">{{ __('levels.price_set_by_owner') }}</small>
+                                @endif
 							</div>
 							
 							<div class="col-12 sm:col-6 md:col-4 xl:col-3">
