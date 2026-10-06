@@ -49,6 +49,15 @@
                                             </td>
                                         </tr>
                                     @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <p class="mb-3">{{ __('frontend.no_reservations') }}</p>
+                                            <a href="{{ route('search') }}" class="button form-btn-inline d-inline-flex align-items-center justify-content-center">
+                                                {{ __('frontend.book_a_table_cta') }}
+                                            </a>
+                                        </td>
+                                    </tr>
                                 @endif
 
                             </tbody>
