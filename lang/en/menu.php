@@ -59,6 +59,7 @@ return array (
   'promo_communication'           => 'Promo & Communication',
   'reservation_orders'            => 'reservation & orders',
   'account'                       => 'Accounts',
+  'restaurant_payment'            => 'Restaurant Payments',
   'users_addon'                   => 'Users & Addon',
   'setup'                         => 'Setup',
   'expense'                       => "Expense",
