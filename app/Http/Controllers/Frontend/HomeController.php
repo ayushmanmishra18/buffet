@@ -79,8 +79,12 @@ class HomeController extends FrontendController
             $cuisine->order_counter = $cuisine->restaurants->sum(function ($restaurant) {
                 return $restaurant->orders->count();
             });
+            $cuisine->active_restaurant_count = $cuisine->restaurants
+                ->where('status', Status::ACTIVE)
+                ->where('current_status', Status::ACTIVE)
+                ->count();
             return $cuisine;
-        })->sortByDesc('order_counter')->take(8);
+        })->where('active_restaurant_count', '>', 0)->sortByDesc('order_counter')->take(8);
     }
 
     private function getActiveCuisines()

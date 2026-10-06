@@ -15,7 +15,7 @@
                         <a href="{{ $ad->link }}" target="_blank" rel="noopener" class="ad-single__link">
                     @endif
                         <figure class="ad-single__figure">
-                            <img src="{{ $ad->image }}"
+                            <img src="{{ $ad->image }}" onerror="this.onerror=null;this.src='{{ asset('frontend/images/default/restaurant.png') }}';"
                                  alt="{{ $ad->title }}"
                                  class="ad-single__img"
                                  loading="lazy">
@@ -44,7 +44,7 @@
                                 <a href="{{ $ad->link }}" target="_blank" rel="noopener" class="ad-grid__link">
                             @endif
                                 <figure class="ad-grid__figure">
-                                    <img src="{{ $ad->image }}"
+                                    <img src="{{ $ad->image }}" onerror="this.onerror=null;this.src='{{ asset('frontend/images/default/restaurant.png') }}';"
                                          alt="{{ $ad->title }}"
                                          class="ad-grid__img"
                                          loading="lazy">
@@ -76,7 +76,7 @@
                                     <a href="{{ $ad->link }}" target="_blank" rel="noopener" class="ad-carousel__link">
                                 @endif
                                     <figure class="ad-carousel__figure">
-                                        <img src="{{ $ad->image }}"
+                                        <img src="{{ $ad->image }}" onerror="this.onerror=null;this.src='{{ asset('frontend/images/default/restaurant.png') }}';"
                                              alt="{{ $ad->title }}"
                                              class="ad-carousel__img"
                                              loading="lazy">

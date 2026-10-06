@@ -173,6 +173,12 @@
 
 
     <!--========= Cusines PART START ========-->
+    <style>
+        .category-card .cuisine-count { position: absolute; top: 10px; right: 10px; background: #EE1D48;
+            color: #fff; font-size: 12px; font-weight: 700; border-radius: 12px; padding: 4px 12px;
+            box-shadow: 0 8px 16px rgba(23, 31, 70, .18); }
+        .category-card .bestSellingCusineImage { height: 230px; object-fit: cover; }
+    </style>
     @if (!blank($bestSellingCuisines))
         <section class="category section-gap-66">
             <div class="container">
@@ -184,7 +190,10 @@
                             <a href="{{ route('search', ['cuisines' => [$bestSellingCusine->slug], 'expedition' => 'all']) }}"
                                 class="category-card">
                                 <img class="bestSellingCusineImage" src="{{ $bestSellingCusine->image }}"
+                                    onerror="this.onerror=null;this.src='{{ asset('frontend/images/default/cuisine.png') }}';"
                                     alt="category">
+                                <span class="cuisine-count">{{ $bestSellingCusine->active_restaurant_count }}
+                                    {{ $bestSellingCusine->active_restaurant_count == 1 ? __('frontend.hotel_single') : __('frontend.hotels') }}</span>
 
                                 <h4> {{ Str::of(strip_tags($bestSellingCusine->name))->limit(18) }}</h4>
                             </a>
