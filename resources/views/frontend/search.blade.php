@@ -84,7 +84,7 @@
                                                     <?php
                                                     $checked = '';
                                                     if (!blank(Request::get('cuisines'))) {
-                                                        $checked = in_array($cuisine->slug, Request::get('cuisines')) ? 'checked' : '';
+                                                        $checked = in_array($cuisine->slug, (array) Request::get('cuisines')) ? 'checked' : '';
                                                     } ?>
                                                     <input id="check-{{ $cuisine->id }}" type="checkbox" multiple
                                                         name="cuisines[]" value="{{ $cuisine->slug }}" <?= $checked ?>>
@@ -155,8 +155,8 @@
     <!-- Push Js = -->
     <script>
         var restaurants = @json($mapRestaurants);
-        var mapLat = '{{ Request::get('lat ') }}';
-        var mapLong = '{{ Request::get('long ') }}';
+        var mapLat = '{{ Request::get('lat') }}';
+        var mapLong = '{{ Request::get('long') }}';
     </script>
 
     <script type="text/javascript" src="{{ asset('frontend/js/rangeslider.min.js') }}"></script>

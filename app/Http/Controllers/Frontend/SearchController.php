@@ -37,10 +37,12 @@ class SearchController extends FrontendController
             ->where(['status' => Status::ACTIVE, 'current_status' => Status::ACTIVE]);
 
         if (!blank($request->get('cuisines'))) {
-            $cuisineSlugs = $request->get('cuisines');
-            $restaurants->whereHas('cuisines', function ($query) use ($cuisineSlugs) {
-                $query->whereIn('slug', $cuisineSlugs);
-            });
+            $cuisineSlugs = array_filter((array) $request->get('cuisines'), 'is_string');
+            if (!blank($cuisineSlugs)) {
+                $restaurants->whereHas('cuisines', function ($query) use ($cuisineSlugs) {
+                    $query->whereIn('slug', $cuisineSlugs);
+                });
+            }
         }
 
         if (!blank($request->get('query'))) {
@@ -54,10 +56,14 @@ class SearchController extends FrontendController
             $restaurants->where($statusColumn, $status);
         }
 
-        if(!blank($request->get('lat')) && !blank($request->get('long'))) {
+        $lat = $request->get('lat');
+        $long = $request->get('long');
+        $distance = $request->get('distance');
+        if (is_numeric($lat) && is_numeric($long)) {
+            $distance = is_numeric($distance) && $distance > 0 ? $distance : setting('geolocation_distance_radius');
             $restaurants->where(['status' => 5])
-            ->select(DB::raw('*, ( 6367 * acos( cos( radians('.$request->get('lat').') ) * cos( radians( `lat` ) ) * cos( radians( `long` ) - radians('.$request->get('long').') ) + sin( radians('.$request->get('lat').') ) * sin( radians( `lat` ) ) ) ) AS distance'))
-                ->having('distance', '<', $request->get('distance') ?? setting('geolocation_distance_radius'))
+            ->select(DB::raw('*, ( 6367 * acos( cos( radians('.(float) $lat.') ) * cos( radians( `lat` ) ) * cos( radians( `long` ) - radians('.(float) $long.') ) + sin( radians('.(float) $lat.') ) * sin( radians( `lat` ) ) ) ) AS distance'))
+                ->having('distance', '<', $distance)
                 ->orderBy('distance');
         }
 
