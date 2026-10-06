@@ -234,8 +234,8 @@
                                                    style="width:18px;height:18px;accent-color:#EE1D48;flex-shrink:0;">
                                             <span style="font-size:22px;">💳</span>
                                             <div>
-                                                <p style="font-size:14px;font-weight:700;color:#1F1F39;margin:0;">Pay via UPI</p>
-                                                <p style="font-size:12px;color:#6E7191;margin:0;">GPay / PhonePe / Paytm / Any UPI</p>
+                                            <p style="font-size:14px;font-weight:700;color:#1F1F39;margin:0;">Pay via UPI</p>
+                                            <p style="font-size:12px;color:#6E7191;margin:0;">GPay / PhonePe / Paytm / BHIM / Any UPI</p>
                                             </div>
                                         </label>
                                     @endif
@@ -549,8 +549,6 @@
         let orderType = "{{ session()->get('cart')['delivery_type'] }}";
         const siteLogo = "{{ asset('images/' . setting('site_logo')) }}";
         const currencyName = "{{ setting('currency_name') }}";
-        const razorpayKey = "{{ env('RAZORPAY_KEY') }}";
-        const stripeKey = "{{ setting('stripe_key') }}";
         const subtotal = "{{ $menuitems['subTotalAmount'] }}";
         const couponAmount = "{{ $menuitems['coupon_amount'] }}";
         const locationLat = parseFloat("{{ $restaurant->lat }}");
@@ -564,8 +562,5 @@
         const lastAddress_latitude = parseFloat("{{ optional($lastAddress)->latitude ?? '23.8103' }}");
         const lastAddress_longitude = parseFloat("{{ optional($lastAddress)->longitude ?? '90.4125' }}");
     </script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
-    <script src="{{ asset('frontend/js/checkout/stripe.js') }}"></script>
     <script src="{{ asset('frontend/js/image-upload.js') }}"></script>
 @endpush

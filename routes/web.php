@@ -42,6 +42,7 @@ use App\Http\Controllers\Frontend\AddressController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\PrivacyController;
 use App\Http\Controllers\Admin\DeliveryBoyController;
+use App\Http\Controllers\Admin\RestaurantPaymentSettingController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Admin\AdministratorController;
@@ -120,15 +121,6 @@ Route::group(['middleware' => ['installed', 'license-activate']], function () {
 
     Route::get('checkout',                                  [CheckoutController::class, 'index'])->name('checkout.index')->middleware('auth');
     Route::post('checkout',                                 [CheckoutController::class, 'store'])->name('checkout.store')->middleware('auth');
-    Route::get('/payment/callback',                         [CheckoutController::class, 'PaystackCallback'])->name('paystack.callback')->middleware('auth');
-
-    Route::post('paytm/status', [CheckoutController::class, 'paytmCallback']);
-
-    Route::post('phonepe/status', [CheckoutController::class, 'phonepeCallback']);
-
-    Route::post('sslcommerz/success', [CheckoutController::class, 'sslcommerzSuccess']);
-    Route::post('sslcommerz/fail', [CheckoutController::class, 'sslcommerzFail']);
-    Route::post('sslcommerz/cancel', [CheckoutController::class, 'sslcommerzCancle']);
 
     Route::get('account/profile',                           [AccountController::class, 'index'])->name('account.profile')->middleware('auth');
     Route::get('account/password',                          [AccountController::class, 'getPassword'])->name('account.password')->middleware('auth');
@@ -157,7 +149,6 @@ Route::group(['middleware' => ['installed', 'license-activate']], function () {
     Route::put('/address-update/update/{id}',               [AddressController::class, 'update'])->name('address.update');
     Route::delete('/address/delete/{id}',                   [AddressController::class, 'destroy'])->name('address.delete');
     Route::get('/search',                                   [SearchController::class, 'filter'])->name('search');
-    Route::get('/{shop}/products/search',                   [SearchController::class, 'filterProduct'])->name('search-product');
     Route::get('/privacy',                                  [PrivacyController::class])->name('privacy');
     Route::get('/terms',                                    [TermController::class])->name('terms');
     Route::get('/contact',                                  [ContactController::class])->name('contact');
@@ -168,9 +159,6 @@ Route::group(['middleware' => ['installed', 'license-activate']], function () {
     Route::get('auth/{provider}',                           [SocialController::class, 'socialRedirect'])->name('social-login');
     Route::get('auth/{provider}/callback',                  [SocialController::class, 'loginWithSocial'])->name('callback');
 
-    //paypal
-    Route::get('success-transaction',                       [CheckoutController::class, 'paypalSuccessTransaction'])->name('successTransaction');
-    Route::get('cancel-transaction',                        [CheckoutController::class, 'paypalCancelTransaction'])->name('cancelTransaction');
 });
 
 
@@ -387,6 +375,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'installed', 'licens
     Route::post('get-user-info',                            [WithdrawController::class, 'getUserInfo'])->name('withdraw.get-user-info');
 
     Route::resource('time-slots',                         TimeSlotController::class);
+    Route::get('restaurant-payment/owner',                [RestaurantPaymentSettingController::class, 'ownerEdit'])->name('restaurant-payment.owner.edit');
+    Route::put('restaurant-payment/owner',                 [RestaurantPaymentSettingController::class, 'ownerUpdate'])->name('restaurant-payment.owner.update');
+    Route::get('restaurant-payment',                       [RestaurantPaymentSettingController::class, 'index'])->name('restaurant-payment.index');
+    Route::get('restaurant-payment/{restaurant}/edit',      [RestaurantPaymentSettingController::class, 'edit'])->name('restaurant-payment.edit');
+    Route::put('restaurant-payment/{restaurant}',           [RestaurantPaymentSettingController::class, 'update'])->name('restaurant-payment.update');
     Route::resource('tables',                             TableController::class);
     Route::get('get-tables',                                [TableController::class, 'getTable'])->name('tables.get-tables');
     Route::resource('addons',                             AddonController::class);

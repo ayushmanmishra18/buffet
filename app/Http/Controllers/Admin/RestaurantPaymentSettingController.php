@@ -25,6 +25,9 @@ class RestaurantPaymentSettingController extends BackendController
      */
     public function index()
     {
+        if (auth()->user()->myrole != \App\Enums\UserRole::ADMIN) {
+            return redirect(route('admin.restaurant-payment.owner.edit'));
+        }
         $restaurants = Restaurant::with('user')
             ->where('status', Status::ACTIVE)
             ->orderBy('name')
@@ -43,6 +46,10 @@ class RestaurantPaymentSettingController extends BackendController
      */
     public function edit(Restaurant $restaurant)
     {
+        if (auth()->user()->myrole != \App\Enums\UserRole::ADMIN
+            && $restaurant->id !== optional(auth()->user()->restaurant)->id) {
+            abort(403);
+        }
         $setting = RestaurantPaymentSetting::forRestaurant($restaurant->id);
         $plans   = Plan::active()->where('billing_type', BillingType::COMMISION)->get();
 
@@ -58,6 +65,10 @@ class RestaurantPaymentSettingController extends BackendController
      */
     public function update(Request $request, Restaurant $restaurant)
     {
+        if (auth()->user()->myrole != \App\Enums\UserRole::ADMIN
+            && $restaurant->id !== optional(auth()->user()->restaurant)->id) {
+            abort(403);
+        }
         $request->validate([
             'upi_id'                  => 'nullable|string|max:100',
             'advance_booking_percent' => 'required|integer|min:0|max:100',
