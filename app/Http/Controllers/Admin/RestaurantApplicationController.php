@@ -80,6 +80,16 @@ class RestaurantApplicationController extends BackendController
         $restaurant->applied        = 1;
         $restaurant->save();
 
+        // Carry the chosen plan into the restaurant's payment settings
+        // (commission plans drive per-order deduction; subscription plans are display-only)
+        $paymentSetting = \App\Models\RestaurantPaymentSetting::forRestaurant($restaurant->id);
+        $plan = $application->plan;
+        if ($plan && $plan->billing_type == \App\Enums\BillingType::COMMISION) {
+            $paymentSetting->plan_id         = $plan->id;
+            $paymentSetting->commission_rate = (float) $plan->commission_rate;
+            $paymentSetting->save();
+        }
+
         // Mark application as approved
         $application->status      = RestaurantApplication::STATUS_APPROVED;
         $application->reviewed_by = auth()->id();
