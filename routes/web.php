@@ -149,9 +149,9 @@ Route::group(['middleware' => ['installed', 'license-activate']], function () {
     Route::put('/address-update/update/{id}',               [AddressController::class, 'update'])->name('address.update');
     Route::delete('/address/delete/{id}',                   [AddressController::class, 'destroy'])->name('address.delete');
     Route::get('/search',                                   [SearchController::class, 'filter'])->name('search');
-    Route::get('/privacy',                                  [PrivacyController::class])->name('privacy');
-    Route::get('/terms',                                    [TermController::class])->name('terms');
-    Route::get('/contact',                                  [ContactController::class])->name('contact');
+    Route::redirect('/privacy', '/page/privacy', 301)->name('privacy');
+    Route::redirect('/terms', '/page/terms-conditions', 301)->name('terms');
+    Route::redirect('/contact', '/page/contact-us', 301)->name('contact');
     Route::get('lang/{locale}',                             [LocalizationController::class, 'index'])->name('lang.index');
     Route::post('/contact',                                 [ContactController::class, 'store'])->name('contact.store');
     Route::get('page/{slug}',                               [FrontendPageController::class, 'index'])->name('page');

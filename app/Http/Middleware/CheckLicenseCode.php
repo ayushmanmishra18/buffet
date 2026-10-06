@@ -23,9 +23,7 @@ class CheckLicenseCode
     public function handle($request, Closure $next){
         $license_code_data = $this->licenseCodeChecker($request);
         if ($license_code_data->status == true) {
-            if (env('LICENSE_CODE') == null || env('LICENSE_CODE') == "") {
-                $envPath = base_path('.env');
-                file_put_contents($envPath, "LICENSE_CODE=", FILE_APPEND);
+            if ((env('LICENSE_CODE') == null || env('LICENSE_CODE') == "") && isset($license_code_data->data->license_code)) {
                 MyString::setEnv('LICENSE_CODE', $license_code_data->data->license_code);
             }
             return $next($request);
